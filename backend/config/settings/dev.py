@@ -29,6 +29,8 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5173',
 ]
 
+AUTH_USER_MODEL = 'users.CustomUser'
+
 #M-Pesa sandbox keys (use environment variables)
 MPESA_CONSUMER_KEY = 'your_sandbox_key'
 MPESA_CONSUMER_SECRET = 'your_sandbox_secret'
