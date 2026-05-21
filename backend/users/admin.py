@@ -20,9 +20,9 @@ class CustomUserAdmin(BaseUserAdmin):
     search_fields = ('email', 'first_name', 'last_name')
     ordering = ('email',)
 
-    admin.site.register(CustomUser, CustomUserAdmin)
+admin.site.register(CustomUser, CustomUserAdmin)
 
-    @admin.register(UserProfile)
-    class userProfileAdmin(admin.ModelAdmin):
-        list_display = ('user', 'phone_number')
-        search_fields = ('user_email', 'user_first_name')
+@admin.register(UserProfile)
+class userProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'phone_number')
+    search_fields = ('user_email', 'user_first_name')
