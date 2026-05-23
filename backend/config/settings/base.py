@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     #third party apps
     'rest_framework',
     'corsheaders',
+    'rest_framework_simplejwt',
 
     'users',
 ]
@@ -53,8 +54,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES':
-    ['rest_framework.authentication.SessionAuthentication',
+    [
+     'rest_framework.authentication.SessionAuthentication',
      'rest_framework.authentication.TokenAuthentication',
+     'rest_framework_simplejwt.authentication.JWTAuthentication',
      ],
      'DEFAULT_PERMISSION_CLASSES':[
          'rest_framework.permissions.AllowAny'
