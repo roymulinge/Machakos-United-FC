@@ -3,7 +3,7 @@ import React from "React";
 const HomePage = () => {
     return (
         <div className="bg-gray-50 font-sans">
-          <header className="relative h-screen bg-cover bg-center bg-no-repeat"
+            <header className="relative h-screen bg-cover bg-center bg-no-repeat"
                   style={{backgroundImage: "url('/images/hero-stadium.jpg)"}}>
                 <div className="absolute inset-0 bg-black/50">
                     <div className="relaive z-10 flex flex-col items-center justify-center h-full text-center text-white px-4">
@@ -19,11 +19,15 @@ const HomePage = () => {
                     </div>
                 </div>
 
-          </header>
+            </header>
            
-        <section className="py-20 px-4 max-w-6xl mx-auto">
+            <section className="py-20 px-4 max-w-6xl mx-auto">
+                <div className="text-center mb-12">
+                    <h2 className="text-4xl font-bold text-gray-800">Who We Are</h2>
+                    <div className="w-24 h-1 bg-green-600 mx-auto mt-4 rounded-full"></div>
+                </div>
 
-        </section>
+            </section>
           
 
         </div>
