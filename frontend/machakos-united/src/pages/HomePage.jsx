@@ -49,6 +49,27 @@ const HomePage = () => {
                 </div>
 
             </section>
+
+            <section className="bg-green-700 py-20 px-4 text-white">
+              <div className="mx-w-4xl mx-auto text-center">
+                <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                    Latest Result
+                </h2>
+                <p className="text-green-100 text-lg mb-8">
+                    KPL - Matchday 12 - Nyayo Stadium
+                </p>
+
+                <div className="flex justify-center items-center gap-8 text-5xl font-black">
+                 <span>Machakos United</span>
+                 <span className="text-6xl">3 - 1</span>
+                 <span>Gor Mahia</span>
+                </div>
+
+                <p>Goals: Ochieng' (12', 58), Mwangi(90+3')</p>
+
+              </div>
+
+            </section>
           
 
         </div>
