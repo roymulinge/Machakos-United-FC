@@ -42,3 +42,5 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
     }
 }
+
+FRONTEND_URL = config('FRONTEND_URL')
