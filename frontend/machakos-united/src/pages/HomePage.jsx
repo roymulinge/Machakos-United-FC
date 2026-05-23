@@ -27,6 +27,22 @@ const HomePage = () => {
                     <div className="w-24 h-1 bg-green-600 mx-auto mt-4 rounded-full"></div>
                 </div>
 
+                <div className="flex flex-col md:flex-row items-center gap-12">
+                    <div className="md:w-1/2">
+                        <p>
+                            Founded in "Add exact date", Machakos United FC is more than a club - it's a family.
+                            We've nurtured local talent and brought silverware to Machakos County,
+                            winning the Kenyan Premier League three times and the domestic cup twice.
+                            Our academy is the heartbeat of the team, producing stars who represent 
+                            Kenya on the international stage.
+                        </p>
+
+                        <button className="mt-6 text-green-600 font-semibold border-b-2 border-green-600 hover:text-green-700">
+                            Learn more →
+                        </button>
+                    </div>
+                </div>
+
             </section>
           
 
