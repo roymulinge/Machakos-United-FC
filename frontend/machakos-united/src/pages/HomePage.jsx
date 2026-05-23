@@ -41,6 +41,11 @@ const HomePage = () => {
                             Learn more →
                         </button>
                     </div>
+
+                    <div>
+                        <img src="/images/team-photo.jpg" alt="Machakos United squad"
+                             className="rounded-2xl shadow-xl w-full object-cover"/>
+                    </div>
                 </div>
 
             </section>
