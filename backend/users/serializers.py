@@ -43,6 +43,10 @@ class LoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
 
+    class Meta:
+        model = User
+        fields = ('email', 'password')
+
     def validate(self, data):
         email = data.get('email')
         password = data.get('password')
