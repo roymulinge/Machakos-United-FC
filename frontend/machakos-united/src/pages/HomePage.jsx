@@ -20,7 +20,10 @@ const HomePage = () => {
                 </div>
 
           </header>
+           
+        <section className="py-20 px-4 max-w-6xl mx-auto">
 
+        </section>
           
 
         </div>
