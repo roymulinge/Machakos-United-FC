@@ -99,6 +99,16 @@ const HomePage = () => {
                 </div>
             </section>
           
+          <footer className="bg-gray-900 text-gray-400 py-12 px-4 text-center">
+            <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                <p>© 2025 Machakos United FC. All rights reserved.</p>
+                <div className="flex gap-6">
+                    <a href="#" className="hover:text-white transition">Twitter</a>
+                    <a href="#" className="hover:text-white transition">FaceBook</a>
+                    <a href="#" className="hover:text-white transition">Instagram</a>
+                </div>
+            </div>
+          </footer>
 
         </div>
     );
