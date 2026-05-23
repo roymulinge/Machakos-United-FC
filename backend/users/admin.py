@@ -28,4 +28,4 @@ admin.site.register(CustomUser, CustomUserAdmin)
 @admin.register(UserProfile)
 class userProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'phone_number')
-    search_fields = ('user_email', 'user_first_name')
+    search_fields = ('user__email', 'user__first_name')
