@@ -70,6 +70,34 @@ const HomePage = () => {
               </div>
 
             </section>
+
+            <section className="py-20 px-4 max-w-4xl mx-auto">
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden md:flex ">
+                    {/*Colored left panel */}
+                    <div className="md:w-1/3 bg-green-600 text-white flex flex-col justify-center items-center">
+                        <p className="text-sm uppercase tracking-wide">Next Match</p>
+                        <p className="text-2xl font-bold">Sat, 28 May</p>
+                        <p className="text-lg">4:00 pm EAT</p>
+                    </div>
+                    {/*Right Panel*/}
+                    <div className="md:w-2/3 p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="text-center">
+                            <p className="font-semibold text-gray-800">Machakos United</p>
+                            <p className="text-gray-500 text-sm">Home</p>
+                        </div>
+                        <div className="text-2xl font-bold text-gray-400">
+                            VS
+                        </div>
+                        <div className="text-center">
+                            <p className="font-semibold text-gray-800">AFC Leopards</p>
+                            <p className="text-gray-500 text-sm">Away</p>
+                        </div>
+                        <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-full transition">
+                            GET Tickets
+                        </button>
+                    </div>
+                </div>
+            </section>
           
 
         </div>
