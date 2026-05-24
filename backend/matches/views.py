@@ -2,7 +2,7 @@
 from rest_framework import generics, permissions
 from django.utils import timezone
 from .models import Fixture, MatchResult
-from .serializers import FixtureSerializer, MatchResultSerializer
+from .serializers import FixtureSerializer,   MatchResultWithFixtureSerializer
 
 
 class UpcomingFixturesView(generics.ListAPIView):
@@ -50,7 +50,7 @@ class ResultsView(generics.ListAPIView):
     GET /api/matches/results/
     Returns all match results (past matches only), most recent first.
     """
-    serializer_class   = MatchResultSerializer
+    serializer_class   = MatchResultWithFixtureSerializer
     permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):

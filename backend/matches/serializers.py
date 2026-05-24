@@ -39,3 +39,21 @@ class FixtureSerializer(serializers.ModelSerializer):
     def get_is_sold_out(self, obj):
         # obj is the Fixture instance being serialized
         return obj.is_sold_out
+class MatchResultWithFixtureSerializer(serializers.ModelSerializer):
+    """
+    Used by ResultsView and HomePage — includes the full nested fixture.
+    We keep MatchResultSerializer separate (no fixture) so FixtureSerializer
+    can embed it without creating a circular reference.
+    Circular reference = MatchResult embeds Fixture embeds MatchResult → infinite loop.
+    """
+    # source='fixture' tells DRF to serialize the related Fixture object
+    # using FixtureSerializer — but we exclude 'result' to avoid the circular loop
+    fixture = FixtureSerializer(read_only=True)
+
+    class Meta:
+        model  = MatchResult
+        fields = (
+            'id', 'home_score', 'away_score',
+            'outcome', 'scorers', 'match_report',
+            'fixture',   # ← nested fixture now included
+        )
