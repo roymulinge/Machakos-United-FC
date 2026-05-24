@@ -11,6 +11,7 @@ import ForgotPassword from './pages/ForgotPassword'
 import FixturesPage from './pages/FixturesPage'   // NEW
 import ResultsPage from './pages/ResultsPage'
 import SquadPage from './pages/SquadPage'
+import TicketsPage from './pages/TicketsPage'
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
         <Route path="/fixtures"        element={<FixturesPage />} />   {/* NEW */}
         <Route path="/results"         element={<ResultsPage />} /> 
         <Route path="/squad" element={<SquadPage />} />
+        <Route path="/tickets" element={<TicketsPage />} />
       </Routes>
 
     </BrowserRouter>
