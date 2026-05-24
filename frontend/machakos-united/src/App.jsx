@@ -10,6 +10,7 @@ import Profile from './pages/Profile'
 import ForgotPassword from './pages/ForgotPassword'
 import FixturesPage from './pages/FixturesPage'   // NEW
 import ResultsPage from './pages/ResultsPage'
+import SquadPage from './pages/SquadPage'
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/fixtures"        element={<FixturesPage />} />   {/* NEW */}
         <Route path="/results"         element={<ResultsPage />} /> 
+        <Route path="/squad" element={<SquadPage />} />
       </Routes>
 
     </BrowserRouter>
