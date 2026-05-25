@@ -47,19 +47,21 @@ function App() {
             <AdminLayout><AdminDashboard /></AdminLayout>
           </AdminRoute>
         } />
-        <Route path="/admin/fixtures" element={
+        <Route path="/admin/fixtures/*" element={
           <AdminRoute>
             <AdminLayout><AdminFixtures /></AdminLayout>
           </AdminRoute>
         } />
-        <Route path="/admin/fixtures/new" element={
-          <AdminRoute>
-            <AdminLayout><AdminFixtures /></AdminLayout>
-          </AdminRoute>
-        } />
-        <Route path="/admin/squad" element={
+
+        <Route path="/admin/squad/*" element={
           <AdminRoute>
             <AdminLayout><AdminSquad /></AdminLayout>
+          </AdminRoute>
+        } />
+
+        <Route path="/admin/results/new" element={
+          <AdminRoute>
+            <AdminLayout><AdminResults /></AdminLayout>
           </AdminRoute>
         } />
         <Route path="/admin/tickets" element={
@@ -73,13 +75,7 @@ function App() {
           </AdminRoute>
         } />
 
-        <Route path="/admin/results" element={
-          <AdminRoute>
-            <AdminLayout><AdminResults /></AdminLayout>
-          </AdminRoute>
-        } />
-
-        <Route path="/admin/results/new" element={
+        <Route path="/admin/results/*" element={
           <AdminRoute>
             <AdminLayout><AdminResults /></AdminLayout>
           </AdminRoute>

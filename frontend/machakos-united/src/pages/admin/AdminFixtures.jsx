@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import apiClient from '../../api/client'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 // ── reusable form field ───────────────────────────────────────────────────────
 function Field({ label, error, children }) {
   return (
