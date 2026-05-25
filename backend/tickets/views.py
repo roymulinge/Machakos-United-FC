@@ -69,17 +69,19 @@ class InitiatePaymentView(APIView):
                 order_id     = order.id,
                 fixture_name = str(fixture),
             )
-
-            # store CheckoutRequestID so we can match the callback
             order.mpesa_checkout_request_id = mpesa_response.get('CheckoutRequestID')
             order.save()
 
         except Exception as e:
-            # if MPesa call fails, mark order as failed — don't leave it PENDING
+            # TEMPORARY — print the full error so we can diagnose
+            import traceback
+            traceback.print_exc()  # prints full stack trace to Django terminal
+            print(f"MPesa error: {e}")  # prints the actual error message
+
             order.status = 'FAILED'
             order.save()
             return Response(
-                {'error': 'MPesa request failed. Please try again.'},
+                {'error': f'MPesa request failed: {str(e)}'},
                 status=status.HTTP_502_BAD_GATEWAY
             )
 
