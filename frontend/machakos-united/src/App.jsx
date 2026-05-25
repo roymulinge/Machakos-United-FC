@@ -9,7 +9,7 @@ import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminFixtures from './pages/admin/AdminFixtures'
 import AdminSquad from './pages/admin/AdminSquad'
 import AdminTickets from './pages/admin/AdminTickets'
-
+import AdminResults from './pages/admin/AdminResults'
 import HomePage from './pages/HomePage'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -70,6 +70,18 @@ function App() {
         <Route path="/admin/verify" element={
           <AdminRoute>
             <AdminLayout><AdminTickets /></AdminLayout>
+          </AdminRoute>
+        } />
+
+        <Route path="/admin/results" element={
+          <AdminRoute>
+            <AdminLayout><AdminResults /></AdminLayout>
+          </AdminRoute>
+        } />
+
+        <Route path="/admin/results/new" element={
+          <AdminRoute>
+            <AdminLayout><AdminResults /></AdminLayout>
           </AdminRoute>
         } />
       </Routes>

@@ -10,7 +10,7 @@ from .models import TicketOrder
 from .serializers import TicketOrderSerializer, InitiatePaymentSerializer
 from .mpesa import initiate_stk_push
 from matches.views import IsStaffOrContentManager
-
+from django.utils import timezone 
 
 class InitiatePaymentView(APIView):
     """
@@ -275,55 +275,66 @@ class AdminDashboardStatsView(APIView):
     permission_classes = [IsStaffOrTicketManager]
 
     def get(self, request):
+        # import here to avoid circular imports between apps
         from matches.models import Fixture, MatchResult
         from squad.models import Player
         from django.db.models import Sum, Count
 
-        # ticket revenue — sum of total_amount for COMPLETE orders
-        revenue_data = TicketOrder.objects.filter(
-            status='COMPLETE'
-        ).aggregate(
-            total_revenue  = Sum('total_amount'),
-            total_tickets  = Sum('quantity'),
-            total_orders   = Count('id'),
-        )
+        try:
+            # ── ticket revenue ────────────────────────────────────────────
+            revenue_data = TicketOrder.objects.filter(
+                status='COMPLETE'
+            ).aggregate(
+                total_revenue = Sum('total_amount'),
+                total_tickets = Sum('quantity'),
+                total_orders  = Count('id'),
+            )
 
-        # upcoming fixtures count
-        upcoming_count = Fixture.objects.filter(
-            match_date__gte=timezone.now()
-        ).count()
+            # ── upcoming fixtures ─────────────────────────────────────────
+            upcoming_count = Fixture.objects.filter(
+                match_date__gte=timezone.now()
+            ).count()
 
-        # squad size
-        squad_count = Player.objects.filter(is_active=True).count()
+            # ── active squad size ─────────────────────────────────────────
+            squad_count = Player.objects.filter(is_active=True).count()
 
-        # recent 5 orders
-        recent_orders = TicketOrder.objects.filter(
-            status='COMPLETE'
-        ).select_related('fixture').order_by('-created_at')[:5]
+            # ── recent 5 completed orders ─────────────────────────────────
+            recent_orders = TicketOrder.objects.filter(
+                status='COMPLETE'
+            ).select_related('fixture').order_by('-created_at')[:5]
 
-        recent_orders_data = [{
-            'id':           o.id,
-            'buyer_name':   o.buyer_name,
-            'fixture':      str(o.fixture),
-            'quantity':     o.quantity,
-            'total_amount': str(o.total_amount),
-            'created_at':   o.created_at,
-        } for o in recent_orders]
+            recent_orders_data = [{
+                'id':           o.id,
+                'buyer_name':   o.buyer_name,
+                'fixture':      str(o.fixture),
+                'quantity':     o.quantity,
+                'total_amount': str(o.total_amount),
+                'created_at':   o.created_at,
+            } for o in recent_orders]
 
-        # win/draw/loss record
-        results = MatchResult.objects.all()
-        record = {
-            'wins':   results.filter(outcome='WIN').count(),
-            'draws':  results.filter(outcome='DRAW').count(),
-            'losses': results.filter(outcome='LOSS').count(),
-        }
+            # ── season record ─────────────────────────────────────────────
+            results = MatchResult.objects.all()
+            record = {
+                'wins':   results.filter(outcome='WIN').count(),
+                'draws':  results.filter(outcome='DRAW').count(),
+                'losses': results.filter(outcome='LOSS').count(),
+            }
 
-        return Response({
-            'revenue':       str(revenue_data['total_revenue'] or 0),
-            'total_tickets': revenue_data['total_tickets'] or 0,
-            'total_orders':  revenue_data['total_orders']  or 0,
-            'upcoming':      upcoming_count,
-            'squad_size':    squad_count,
-            'record':        record,
-            'recent_orders': recent_orders_data,
-        })
+            return Response({
+                'revenue':       str(revenue_data['total_revenue'] or 0),
+                'total_tickets': revenue_data['total_tickets'] or 0,
+                'total_orders':  revenue_data['total_orders']  or 0,
+                'upcoming':      upcoming_count,
+                'squad_size':    squad_count,
+                'record':        record,
+                'recent_orders': recent_orders_data,
+            })
+
+        except Exception as e:
+            # print to Django terminal so we can see exactly what crashed
+            import traceback
+            traceback.print_exc()
+            return Response(
+                {'error': str(e)},
+                status=500
+            )
