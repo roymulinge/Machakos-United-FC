@@ -1,6 +1,7 @@
 // src/pages/admin/AdminSquad.jsx
 import { useState, useEffect } from 'react'
 import apiClient from '../../api/client'
+import { useLocation } from 'react-router-dom'
 
 const inputClass = `w-full bg-white/5 border border-white/10 text-white placeholder-gray-600
                     rounded-lg px-4 py-2.5 text-sm outline-none transition-all
@@ -135,6 +136,14 @@ export default function AdminSquad() {
   const [editTarget, setEditTarget] = useState(null)
   const [deleteId, setDeleteId]     = useState(null)
   const [filter, setFilter]         = useState('ALL')
+
+  const location = useLocation()
+
+  useEffect(() => {
+    if (location.pathname === '/admin/squad/new') {
+      setView('new')
+    }
+  }, [location.pathname]) 
 
   const fetchPlayers = async () => {
     try {

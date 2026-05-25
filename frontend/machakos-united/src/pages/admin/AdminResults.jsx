@@ -1,6 +1,7 @@
 // src/pages/admin/AdminResults.jsx
 import { useState, useEffect } from 'react'
 import apiClient from '../../api/client'
+import { useLocation } from 'react-router-dom'
 
 const inputClass = `w-full bg-white/5 border border-white/10 text-white placeholder-gray-600
                     rounded-lg px-4 py-2.5 text-sm outline-none transition-all
@@ -334,7 +335,15 @@ export default function AdminResults() {
   // filter: 'pending' = no result yet, 'done' = has result, 'all'
   const [filter, setFilter]       = useState('pending')
   const [successMsg, setSuccessMsg] = useState('')
+  
 
+  const location = useLocation()
+
+    useEffect(() => {
+    if (location.pathname === '/admin/results/new') {
+        setMode('add')
+    }
+    }, [location.pathname])
   const fetchFixtures = async () => {
     try {
       // use admin endpoint — gets ALL fixtures including past ones

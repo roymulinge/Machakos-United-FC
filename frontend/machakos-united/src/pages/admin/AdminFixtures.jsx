@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import apiClient from '../../api/client'
-
+import { useNavigate, useLocation } from 'react-router-dom'
 // ── reusable form field ───────────────────────────────────────────────────────
 function Field({ label, error, children }) {
   return (
@@ -157,6 +157,14 @@ export default function AdminFixtures() {
   const [view, setView]           = useState('list')   // 'list' | 'new' | 'edit'
   const [editTarget, setEditTarget] = useState(null)
   const [deleteId, setDeleteId]   = useState(null)
+
+  const location = useLocation()
+
+    useEffect(() => {
+    if (location.pathname === '/admin/fixtures/new') {
+        setView('new')
+    }
+    }, [location.pathname])
 
   const EMPTY_FORM = {
     home_team: 'Machakos United', away_team: '', match_date: '',
