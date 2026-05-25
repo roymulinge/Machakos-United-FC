@@ -2,8 +2,9 @@
 from rest_framework import generics, permissions
 from django.utils import timezone
 from .models import Fixture, MatchResult
-from .serializers import FixtureSerializer,   MatchResultWithFixtureSerializer
-
+from .serializers import FixtureSerializer,  MatchResultSerializer, MatchResultWithFixtureSerializer
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 class UpcomingFixturesView(generics.ListAPIView):
     """
@@ -56,3 +57,68 @@ class ResultsView(generics.ListAPIView):
     def get_queryset(self):
         # select_related('fixture') avoids N+1 when serializer accesses fixture fields
         return MatchResult.objects.all().select_related('fixture')
+
+
+class IsStaffOrContentManager(permissions.BasePermission):
+    """
+    Custom permission — only staff or users with manager/owner role can pass.
+    Used on all admin write endpoints.
+    """
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+        if request.user.is_staff:
+            return True
+        # check the profile role
+        profile = getattr(request.user, 'profile', None)
+        return profile and profile.can_manage_content
+
+
+# ── Admin Fixture endpoints ───────────────────────────────────────────────────
+
+class AdminFixtureListCreateView(generics.ListCreateAPIView):
+    """
+    GET  /api/admin/fixtures/     → list all fixtures (past + future)
+    POST /api/admin/fixtures/     → create a new fixture
+    """
+    serializer_class   = FixtureSerializer
+    permission_classes = [IsStaffOrContentManager]
+
+    def get_queryset(self):
+        return Fixture.objects.all().select_related('result').order_by('-match_date')
+
+
+class AdminFixtureDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET    /api/admin/fixtures/<id>/   → get single fixture
+    PUT    /api/admin/fixtures/<id>/   → full update
+    PATCH  /api/admin/fixtures/<id>/   → partial update
+    DELETE /api/admin/fixtures/<id>/   → delete fixture
+    """
+    serializer_class   = FixtureSerializer
+    permission_classes = [IsStaffOrContentManager]
+    queryset           = Fixture.objects.all().select_related('result')
+
+
+# ── Admin Result endpoints ────────────────────────────────────────────────────
+
+class AdminResultCreateView(generics.CreateAPIView):
+    """
+    POST /api/admin/results/   → add a result to a fixture
+    """
+    serializer_class   = MatchResultSerializer
+    permission_classes = [IsStaffOrContentManager]
+
+    def perform_create(self, serializer):
+        # perform_create is called by CreateAPIView after validation
+        # we can add extra logic here before saving
+        serializer.save()
+
+
+class AdminResultDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    GET/PATCH/DELETE /api/admin/results/<id>/
+    """
+    serializer_class   = MatchResultSerializer
+    permission_classes = [IsStaffOrContentManager]
+    queryset           = MatchResult.objects.all()

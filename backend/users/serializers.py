@@ -7,11 +7,36 @@ User = get_user_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Read-only serializer — used to return user data in responses"""
+    """Read-only serializer — returns user data including admin role"""
+    # SerializerMethodFields to expose the profile role and permission flags
+    role             = serializers.SerializerMethodField()
+    is_admin_user    = serializers.SerializerMethodField()
+    can_manage_content  = serializers.SerializerMethodField()
+    can_manage_tickets  = serializers.SerializerMethodField()
+
     class Meta:
-        model = User
-        # never expose password — only safe fields
-        fields = ('id', 'email', 'first_name', 'last_name', 'date_joined')
+        model  = User
+        fields = (
+            'id', 'email', 'first_name', 'last_name', 'date_joined',
+            'is_staff',
+            'role', 'is_admin_user', 'can_manage_content', 'can_manage_tickets',
+        )
+
+    def get_role(self, obj):
+        # safely access profile — returns 'fan' if profile doesn't exist
+        return getattr(obj, 'profile', None) and obj.profile.role or 'fan'
+
+    def get_is_admin_user(self, obj):
+        profile = getattr(obj, 'profile', None)
+        return profile.is_admin_user if profile else False
+
+    def get_can_manage_content(self, obj):
+        profile = getattr(obj, 'profile', None)
+        return profile.can_manage_content if profile else False
+
+    def get_can_manage_tickets(self, obj):
+        profile = getattr(obj, 'profile', None)
+        return profile.can_manage_tickets if profile else False
 
 
 class RegisterSerializer(serializers.ModelSerializer):

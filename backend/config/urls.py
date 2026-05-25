@@ -18,6 +18,9 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+admin.site.site_header  = 'Machakos United FC'
+admin.site.site_title   = 'Machakos United FC Admin'
+admin.site.index_title  = 'Club Management Portal'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,4 +30,7 @@ urlpatterns = [
     path('api/matches/',        include('matches.urls')),
     path('api/squad/',          include('squad.urls')), 
     path('api/tickets/',       include('tickets.urls')), 
+    path('api/admin/',          include('config.admin_urls')),
 ]
+
+

@@ -9,6 +9,7 @@ from matches.models import Fixture
 from .models import TicketOrder
 from .serializers import TicketOrderSerializer, InitiatePaymentSerializer
 from .mpesa import initiate_stk_push
+from matches.views import IsStaffOrContentManager
 
 
 class InitiatePaymentView(APIView):
@@ -187,3 +188,142 @@ class OrderDetailView(generics.RetrieveAPIView):
     def get_queryset(self):
         # users can only fetch their own orders — not other people's
         return TicketOrder.objects.filter(user=self.request.user)
+    
+
+class IsStaffOrTicketManager(permissions.BasePermission):
+    """Ticket officers + managers + owners can view ticket data"""
+    def has_permission(self, request, view):
+        if not request.user.is_authenticated:
+            return False
+        if request.user.is_staff:
+            return True
+        profile = getattr(request.user, 'profile', None)
+        return profile and profile.can_manage_tickets
+
+
+class AdminTicketListView(generics.ListAPIView):
+    """
+    GET /api/admin/tickets/
+    All ticket orders with filtering by status and fixture.
+    """
+    serializer_class   = TicketOrderSerializer
+    permission_classes = [IsStaffOrTicketManager]
+
+    def get_queryset(self):
+        qs = TicketOrder.objects.all().select_related('fixture', 'user')
+        # allow filtering by status e.g. ?status=COMPLETE
+        status_filter = self.request.query_params.get('status')
+        if status_filter:
+            qs = qs.filter(status=status_filter)
+        # allow filtering by fixture e.g. ?fixture=3
+        fixture_filter = self.request.query_params.get('fixture')
+        if fixture_filter:
+            qs = qs.filter(fixture_id=fixture_filter)
+        return qs
+
+
+class AdminVerifyTicketView(APIView):
+    """
+    POST /api/admin/tickets/verify/
+    Body: { "ticket_code": "A3F9-B2D1-CC" }
+    Used at the gate to verify a ticket is valid.
+    """
+    permission_classes = [IsStaffOrTicketManager]
+
+    def post(self, request):
+        ticket_code = request.data.get('ticket_code', '').strip().upper()
+
+        if not ticket_code:
+            return Response(
+                {'error': 'ticket_code is required'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            order = TicketOrder.objects.select_related(
+                'fixture', 'user'
+            ).get(ticket_code=ticket_code)
+        except TicketOrder.DoesNotExist:
+            return Response(
+                {'valid': False, 'error': 'Invalid ticket code'},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        # only COMPLETE orders are valid at the gate
+        if order.status != 'COMPLETE':
+            return Response({
+                'valid':   False,
+                'error':   f'Ticket status is {order.status} — not valid for entry',
+                'status':  order.status,
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response({
+            'valid':        True,
+            'buyer_name':   order.buyer_name,
+            'fixture':      str(order.fixture),
+            'quantity':     order.quantity,
+            'ticket_code':  order.ticket_code,
+            'receipt':      order.mpesa_receipt_number,
+        })
+
+
+class AdminDashboardStatsView(APIView):
+    """
+    GET /api/admin/stats/
+    Returns key numbers for the dashboard overview cards.
+    """
+    permission_classes = [IsStaffOrTicketManager]
+
+    def get(self, request):
+        from matches.models import Fixture, MatchResult
+        from squad.models import Player
+        from django.db.models import Sum, Count
+
+        # ticket revenue — sum of total_amount for COMPLETE orders
+        revenue_data = TicketOrder.objects.filter(
+            status='COMPLETE'
+        ).aggregate(
+            total_revenue  = Sum('total_amount'),
+            total_tickets  = Sum('quantity'),
+            total_orders   = Count('id'),
+        )
+
+        # upcoming fixtures count
+        upcoming_count = Fixture.objects.filter(
+            match_date__gte=timezone.now()
+        ).count()
+
+        # squad size
+        squad_count = Player.objects.filter(is_active=True).count()
+
+        # recent 5 orders
+        recent_orders = TicketOrder.objects.filter(
+            status='COMPLETE'
+        ).select_related('fixture').order_by('-created_at')[:5]
+
+        recent_orders_data = [{
+            'id':           o.id,
+            'buyer_name':   o.buyer_name,
+            'fixture':      str(o.fixture),
+            'quantity':     o.quantity,
+            'total_amount': str(o.total_amount),
+            'created_at':   o.created_at,
+        } for o in recent_orders]
+
+        # win/draw/loss record
+        results = MatchResult.objects.all()
+        record = {
+            'wins':   results.filter(outcome='WIN').count(),
+            'draws':  results.filter(outcome='DRAW').count(),
+            'losses': results.filter(outcome='LOSS').count(),
+        }
+
+        return Response({
+            'revenue':       str(revenue_data['total_revenue'] or 0),
+            'total_tickets': revenue_data['total_tickets'] or 0,
+            'total_orders':  revenue_data['total_orders']  or 0,
+            'upcoming':      upcoming_count,
+            'squad_size':    squad_count,
+            'record':        record,
+            'recent_orders': recent_orders_data,
+        })
