@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 // useLocation — tells us the current URL so we can highlight the active link
 // useNavigate — lets us navigate programmatically (e.g. after logout)
 import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const Navbar = () => {
   // isOpen controls whether the mobile hamburger menu is visible
@@ -16,6 +17,8 @@ const Navbar = () => {
 
   // location.pathname gives us the current URL e.g. "/login"
   const location = useLocation()
+
+   const { user } = useAuth()
 
   // Close mobile menu whenever the user navigates to a new page
   useEffect(() => {
@@ -73,18 +76,47 @@ const Navbar = () => {
 
           {/* Desktop auth buttons */}
           <div className="hidden md:flex items-center gap-3">
-            <Link
-              to="/login"
-              className="text-sm text-gray-300 hover:text-white transition-colors duration-200 font-medium"
-            >
-              Sign in
-            </Link>
-            <Link
-              to="/register"
-              className="text-sm bg-green-600 hover:bg-green-500 text-white font-medium px-4 py-2 rounded-full transition-colors duration-200"
-            >
-              Register
-            </Link>
+
+            {/* Admin link — only visible to staff/owner/manager */}
+            {user?.is_admin_user && (
+              <Link
+                to="/admin"
+                className="text-xs text-green-400 hover:text-green-300 font-medium
+                          border border-green-500/20 hover:border-green-500/40
+                          px-3 py-1.5 rounded-full transition-all uppercase tracking-widest"
+              >
+                Admin
+              </Link>
+            )}
+
+            {user ? (
+              // logged in — show name + profile link
+              <>
+                <Link
+                  to="/profile"
+                  className="text-sm text-gray-300 hover:text-white transition-colors font-medium"
+                >
+                  {user.first_name}
+                </Link>
+              </>
+            ) : (
+              // not logged in — show sign in + register
+              <>
+                <Link
+                  to="/login"
+                  className="text-sm text-gray-300 hover:text-white transition-colors font-medium"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  to="/register"
+                  className="text-sm bg-green-600 hover:bg-green-500 text-white font-medium
+                            px-4 py-2 rounded-full transition-colors duration-200"
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile hamburger button — visible only on small screens (md:hidden) */}
@@ -114,6 +146,16 @@ const Navbar = () => {
           <Link to="/results" className={linkClass('/results')}>Results</Link>
           <Link to="/squad" className={linkClass('/squad')}>Squad</Link>
           <Link to="/tickets" className={linkClass('/tickets')}>Tickets</Link>
+          {user?.is_admin_user && (
+            <Link
+              to="/admin"
+              className="text-xs text-green-400 hover:text-green-300 font-medium
+                        border border-green-500/20 hover:border-green-500/40
+                        px-3 py-1.5 rounded-full transition-all uppercase tracking-widest"
+            >
+              Admin
+            </Link>
+          )}
           <div className="border-t border-gray-800 pt-4 flex flex-col gap-3">
             <Link to="/login" className="text-sm text-gray-300 font-medium">Sign in</Link>
             <Link to="/register" className="text-sm bg-green-600 text-white font-medium px-4 py-2 rounded-full text-center">

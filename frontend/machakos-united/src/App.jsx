@@ -3,6 +3,13 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import Navbar from './components/Navbar'
+import AdminRoute from './components/AdminRoute'
+import AdminLayout from './components/AdminLayout'
+import AdminDashboard from './pages/admin/AdminDashboard'
+import AdminFixtures from './pages/admin/AdminFixtures'
+import AdminSquad from './pages/admin/AdminSquad'
+import AdminTickets from './pages/admin/AdminTickets'
+
 import HomePage from './pages/HomePage'
 import Login from './pages/Login'
 import Register from './pages/Register'
@@ -34,6 +41,37 @@ function App() {
         <Route path="/results"         element={<ResultsPage />} /> 
         <Route path="/squad" element={<SquadPage />} />
         <Route path="/tickets" element={<TicketsPage />} />
+
+        <Route path="/admin" element={
+          <AdminRoute>
+            <AdminLayout><AdminDashboard /></AdminLayout>
+          </AdminRoute>
+        } />
+        <Route path="/admin/fixtures" element={
+          <AdminRoute>
+            <AdminLayout><AdminFixtures /></AdminLayout>
+          </AdminRoute>
+        } />
+        <Route path="/admin/fixtures/new" element={
+          <AdminRoute>
+            <AdminLayout><AdminFixtures /></AdminLayout>
+          </AdminRoute>
+        } />
+        <Route path="/admin/squad" element={
+          <AdminRoute>
+            <AdminLayout><AdminSquad /></AdminLayout>
+          </AdminRoute>
+        } />
+        <Route path="/admin/tickets" element={
+          <AdminRoute>
+            <AdminLayout><AdminTickets /></AdminLayout>
+          </AdminRoute>
+        } />
+        <Route path="/admin/verify" element={
+          <AdminRoute>
+            <AdminLayout><AdminTickets /></AdminLayout>
+          </AdminRoute>
+        } />
       </Routes>
 
     </BrowserRouter>
