@@ -1,5 +1,3 @@
-// Import BrowserRouter to enable routing throughout the app
-// Routes and Route define which component renders at which URL
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
 import Navbar from './components/Navbar'
@@ -15,34 +13,63 @@ import Login from './pages/Login'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
 import ForgotPassword from './pages/ForgotPassword'
-import FixturesPage from './pages/FixturesPage'   // NEW
+import FixturesPage from './pages/FixturesPage'
 import ResultsPage from './pages/ResultsPage'
 import SquadPage from './pages/SquadPage'
 import TicketsPage from './pages/TicketsPage'
 import NotFound from './pages/NotFound'
 
+// ── Layout wrapper for all public pages ───────────────────────────────────────
+// Renders Navbar + the page content
+// Only used on public routes — admin routes use AdminLayout instead
+function PublicLayout({ children }) {
+  return (
+    <>
+      {/* Navbar only appears on public pages — not on /admin/* */}
+      <Navbar />
+      {children}
+    </>
+  )
+}
+
 function App() {
   return (
-    // BrowserRouter must wrap EVERYTHING that uses routing
-    // Without this, useNavigate() and <Link> crash — that was your error
     <BrowserRouter>
-
-      {/* Navbar appears on every page because it's outside <Routes> */}
-      <Navbar />
-
-      {/* Routes looks at the current URL and renders the matching Route */}
       <Routes>
-        {/* index means this is the default — renders at "/" */}
-        <Route index element={<HomePage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/fixtures"        element={<FixturesPage />} />   {/* NEW */}
-        <Route path="/results"         element={<ResultsPage />} /> 
-        <Route path="/squad" element={<SquadPage />} />
-        <Route path="/tickets" element={<TicketsPage />} />
 
+        {/* ── Public routes — all wrapped in PublicLayout (has Navbar) ── */}
+        <Route index element={
+          <PublicLayout><HomePage /></PublicLayout>
+        } />
+        <Route path="/login" element={
+          <PublicLayout><Login /></PublicLayout>
+        } />
+        <Route path="/register" element={
+          <PublicLayout><Register /></PublicLayout>
+        } />
+        <Route path="/profile" element={
+          <PublicLayout><Profile /></PublicLayout>
+        } />
+        <Route path="/forgot-password" element={
+          <PublicLayout><ForgotPassword /></PublicLayout>
+        } />
+        <Route path="/fixtures" element={
+          <PublicLayout><FixturesPage /></PublicLayout>
+        } />
+        <Route path="/results" element={
+          <PublicLayout><ResultsPage /></PublicLayout>
+        } />
+        <Route path="/squad" element={
+          <PublicLayout><SquadPage /></PublicLayout>
+        } />
+        <Route path="/tickets" element={
+          <PublicLayout><TicketsPage /></PublicLayout>
+        } />
+        <Route path="*" element={
+          <PublicLayout><NotFound /></PublicLayout>
+        } />
+
+        {/* ── Admin routes — NO Navbar, use AdminLayout sidebar instead ── */}
         <Route path="/admin" element={
           <AdminRoute>
             <AdminLayout><AdminDashboard /></AdminLayout>
@@ -53,16 +80,14 @@ function App() {
             <AdminLayout><AdminFixtures /></AdminLayout>
           </AdminRoute>
         } />
-
+        <Route path="/admin/results/*" element={
+          <AdminRoute>
+            <AdminLayout><AdminResults /></AdminLayout>
+          </AdminRoute>
+        } />
         <Route path="/admin/squad/*" element={
           <AdminRoute>
             <AdminLayout><AdminSquad /></AdminLayout>
-          </AdminRoute>
-        } />
-
-        <Route path="/admin/results/new" element={
-          <AdminRoute>
-            <AdminLayout><AdminResults /></AdminLayout>
           </AdminRoute>
         } />
         <Route path="/admin/tickets" element={
@@ -76,15 +101,7 @@ function App() {
           </AdminRoute>
         } />
 
-        <Route path="/admin/results/*" element={
-          <AdminRoute>
-            <AdminLayout><AdminResults /></AdminLayout>
-          </AdminRoute>
-        } />
-
-        <Route path="*" element={<NotFound />} />
       </Routes>
-
     </BrowserRouter>
   )
 }
