@@ -19,6 +19,7 @@ import FixturesPage from './pages/FixturesPage'   // NEW
 import ResultsPage from './pages/ResultsPage'
 import SquadPage from './pages/SquadPage'
 import TicketsPage from './pages/TicketsPage'
+import NotFound from './pages/NotFound'
 
 function App() {
   return (
@@ -80,6 +81,8 @@ function App() {
             <AdminLayout><AdminResults /></AdminLayout>
           </AdminRoute>
         } />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
     </BrowserRouter>
